@@ -26,7 +26,7 @@ const userSchema = new Schema<IUser>({
             message: "Invalid email",
         },
     },
-    password: {
+    password: { //hashed: my bad for poor naming
         type: String,
         required: true,
     },

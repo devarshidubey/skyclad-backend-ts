@@ -41,6 +41,7 @@ const documentSchema = new Schema<IDocument>({
     textContent: {
         type: String,
         required: true,
+        max_length: 10000
     },
 }, { timestamps: true });
 

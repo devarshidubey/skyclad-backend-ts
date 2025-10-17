@@ -12,13 +12,6 @@ export interface IDocumentTag extends Document {
 
 
 const documentTagSchema = new Schema<IDocumentTag>({
-    id: {
-        type: String,
-        default: uuidv4,
-        unique: true,
-        required: true,
-        index: true,
-    },
     documentId: {
         type: Schema.Types.ObjectId,
         ref: "Document",
@@ -34,5 +27,19 @@ const documentTagSchema = new Schema<IDocumentTag>({
         required: true
     }
 }, { timestamps: true });
+
+documentTagSchema.index(
+    { documentId: 1, isPrimary: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { isPrimary: true },
+        name: "unique_primary_tag_per_document"
+    }
+);
+
+documentTagSchema.index(
+    { documentId: 1, tagId: 1 },
+    { unique: true, name: "unique_tag_per_document" }
+);
 
 export const DocumentTag = model<IDocumentTag>("DocumentTag", documentTagSchema);

@@ -2,12 +2,20 @@ import { createDocumentWithTags } from "../document/document.service.js";
 import { Document } from "../../models/Document.js"; // adjust import path
 import { Tag } from "../../models/Tag.js";
 import { Types } from "mongoose";
-import { askCerebras } from "./cerebras.service.js";
+import { askCerebras, askCerebrasWithRetry } from "./cerebras.service.js";
 import HTTPError from "../../utils/HTTPError.js";
+import { Usage } from "../../models/Usage.js";
 
 interface ProcessFolderInput {
     ownerId: Types.ObjectId;
     scope: { type: "folder"; name: string };
+    messages: { role: string; content: string }[];
+    actions: string[];
+}
+
+interface ProcessFileInput {
+    ownerId: Types.ObjectId;
+    scope: { type: "file"; folder: string; name: string };
     messages: { role: string; content: string }[];
     actions: string[];
 }
@@ -50,7 +58,7 @@ export async function processFolderAction(input: ProcessFolderInput) {
       `;
 
 
-    const parsed = await askCerebras(llmPrompt);
+    const parsed = await askCerebrasWithRetry(llmPrompt);
 
     const regex = new RegExp(parsed.regex, "gi");
     const chosenAction = parsed.action;
@@ -81,4 +89,48 @@ export async function processFolderAction(input: ProcessFolderInput) {
     });
 
     return { keywords: parsed.keywords, regex: parsed.regex, action: chosenAction };
+}
+
+export async function processFileAction(input: ProcessFileInput) {
+    const { ownerId, scope, messages, actions } = input;
+
+    const doc = await Document.findOne({ ownerId, filename: scope.name }).lean();
+    if (!doc) throw new HTTPError(404, "Document not found");
+
+    const llmPrompt = `
+        You are given a document titled "${doc.filename}".
+        User message: ${messages.map((m) => m.content).join("\n")}
+        Document content (first 2000 chars for context):
+        ---
+        ${doc.textContent.slice(0, 2000)}
+        ---
+
+        Task:
+        1. Decide the most appropriate action to take on this document among: ${actions.join(", ")}.
+        2. Generate text content based on the user's message
+        Return JSON in this format:
+        {
+            "action": "<chosen_action>",
+            "output": "<textual result>",
+        }
+    `;
+
+    const parsed = await askCerebrasWithRetry(llmPrompt);
+
+    const chosenAction = parsed.action;
+    const outputContent = parsed.output ?? doc.textContent;
+
+    await createDocumentWithTags({
+        ownerId,
+        filename: `${scope.name}-result.${chosenAction === "make_csv" ? "csv" : "txt"}`,
+        mime: chosenAction === "make_csv" ? "text/csv" : "text/plain",
+        textContent: outputContent,
+        primaryTag: scope.folder,
+        secondaryTags: ["result", chosenAction],
+    });
+
+    return {
+        action: chosenAction,
+        output: outputContent,
+    };
 }

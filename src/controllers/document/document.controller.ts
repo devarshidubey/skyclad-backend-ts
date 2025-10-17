@@ -35,7 +35,7 @@ export const updateDocumentController = async (
     try {
         const parsed = updateDocumentSchema.parse(req.body);
 
-        const documentId = new Types.ObjectId(req.params.id);
+        const documentId = new Types.ObjectId(req.params.documentId);
         const userId = new Types.ObjectId(req.user!.id);
         const accessLevel = req.user!.accessLevel!;
 

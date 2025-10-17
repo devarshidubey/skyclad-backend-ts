@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/:documentId', authorize, authorizePermission("documents:read"), getDocumentController);
 router.post('', authorize, authorizePermission("documents:create"), createDocumentController);
 router.put('/:documentId', authorize, authorizePermission("documents:update"), updateDocumentController);
+router.delete
 
 
 export default router;

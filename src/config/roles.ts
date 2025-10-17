@@ -4,26 +4,19 @@ export const ROLES = {
         "documents:read:any",
         "documents:update:any",
         "documents:delete:any",
-        "tags:read:any",
-        "tags:update:any",
-        "tags:delete:any",
-        "actions:run:any",
-        "usage:view:any",
+        "actions:usage:any"
     ],
     moderator: [
         "documents:read:any",
-        "tags:read:any",
-        "usage:view:any",
+        "actions:usage:any",
     ],
     user: [
         "documents:read:own",
         "documents:create:own",
         "documents:update:own",
         "documents:delete:own",
-        "tags:read:own",
-        "tags:create:own",
         "actions:run:own",
-        "usage:view:own",
+        "actions:usage:own",
     ],
 } as const;
 

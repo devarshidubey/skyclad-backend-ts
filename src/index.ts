@@ -12,8 +12,6 @@ import errorHandler from "./middlewares/errorHandler.js";
 import type { CorsOptions } from "cors";
 
 dotenv.config();
-console.log("CEREBRAS_API_KEY:", process.env.CEREBRAS_API_KEY);
-
 
 const app = express();
 const PORT: number = Number(process.env.PORT);
