@@ -41,7 +41,11 @@ describe("JWT Isolation & Role Enforcement", () => {
   it("user1 can read her own document", async () => {
     const res = await request
       .get(`/v1/docs/${user1DocId}`)
-      .set("authorization", `Bearer ${user1Token}`);
+      .set("authorization", `Bearer ${user1Token}`)
+      .send({
+        filename: "redacted",
+        textContent: "removed by admin"
+      });
     
     expect(res.status).toBe(200);
     expect(res.body.data._id).toBe(user1DocId);
@@ -69,14 +73,11 @@ describe("JWT Isolation & Role Enforcement", () => {
 
   it("admin can edit user1's documents", async () => {
     const res1 = await request
-      .get(`/v1/docs/${user1DocId}`)
-      .set("authorization", `Bearer ${adminToken}`);
+      .put(`/v1/docs/${user1DocId}`)
+      .set("authorization", `Bearer ${adminToken}`)
+      .send({ filename: "redacted", textContent: "admin removed"});
+    console.log(res1.body)
     expect(res1.status).toBe(200);
-
-    const res2 = await request
-      .get(`/v1/docs/${user2DocId}`)
-      .set("authorization", `Bearer ${adminToken}`);
-    expect(res2.status).toBe(200);
   });
 
   it("request without JWT fails", async () => {

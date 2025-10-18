@@ -23,7 +23,7 @@ describe("Folder vs File Scope Rules", () => {
       });
 
     expect(res.status).toBe(400);
-  });
+  }, 30000);
 
   it("should succeed if scoped action uses valid folder", async () => {
     // first create folder

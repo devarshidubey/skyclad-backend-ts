@@ -1,3 +1,5 @@
+process.env.NODE_ENV = "test";
+
 import { beforeAll, afterAll, beforeEach, vitest } from "vitest";
 import mongoose from "mongoose";
 import { MongoMemoryReplSet, MongoMemoryServer } from "mongodb-memory-server";

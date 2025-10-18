@@ -3,6 +3,7 @@ import { MongoTransport } from "@innova2/winston-mongodb";
 import type { TransformableInfo } from "logform";
 
 function getMongoTransport() {
+  if(process.env.NODE_ENV === "test") return null;
   return new MongoTransport({
     connectionString: process.env.MONGO_AUDIT_URI!,
     dbName: process.env.MONGO_AUDIT_DB!,
@@ -25,6 +26,13 @@ const flattenLogFormat = winston.format((info: TransformableInfo): boolean | Tra
   return info;
 });
 
+const transports: winston.transport[] = [
+  new winston.transports.File({ filename: "error.log", level: "error" }),
+  new winston.transports.File({ filename: "combined.log", level: "info" }),
+];
+
+const mongoTransport = getMongoTransport();
+if(mongoTransport) transports.push(mongoTransport);
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || "info", //log only info or above level
@@ -33,11 +41,7 @@ const logger = winston.createLogger({
       winston.format.json()
     ),
     defaultMeta: {service: 'user-service'},
-    transports: [
-        new winston.transports.File({filename: 'error.log', level: 'error'}),
-        new winston.transports.File({filename: 'combined.log', level: 'info'}),
-        getMongoTransport(),
-    ],
+    transports
 })
 
 if (process.env.NODE_ENV !== "production") {
