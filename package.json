@@ -5,6 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
     "test": "vitest --sequence.concurrent=false",
     "seed": "ts-node-dev --loader ts-node/esm src/scripts/seed.ts"
   },
@@ -19,6 +21,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^8.19.1",
+    "jsonwebtoken": "^9.0.2",
     "uuid": "^13.0.0",
     "winston": "^3.18.3",
     "zod": "^4.1.12"
@@ -35,7 +38,6 @@
     "@types/winston": "^2.4.4",
     "cross-env": "^10.1.0",
     "jest": "^30.2.0",
-    "jsonwebtoken": "^9.0.2",
     "mongodb-memory-server": "^10.2.3",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.5",

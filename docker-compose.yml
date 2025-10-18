@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  skyclad-backend:
+    image: skyclad-backend:latest
+    container_name: skyclad-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env   # loads all variables from .env automatically
+    restart: unless-stopped
