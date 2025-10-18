@@ -1,10 +1,10 @@
 import express from "express";
 import { authorize } from "../middlewares/auth.middleware.js";
-import { assignRole } from "../controllers/user/user.controller.js";
 import { authorizePermission } from "../middlewares/permissions.middleware.js";
+import { auditController } from "../controllers/audit/audit.controller.js";
 
 const router = express.Router();
 
-router.put('/assignRole/:id', authorize, authorizePermission("access:update"), assignRole);
+router.get('/', authorize, authorizePermission("audit:read"), auditController);
 
 export default router;

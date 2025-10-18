@@ -25,9 +25,9 @@ export async function processFolderAction(input: ProcessFolderInput) {
 
     const primaryTag = await Tag.findOne({ name: scope.name, ownerId });
 
-    if(!primaryTag) throw new HTTPError(404, `Primary tag not found for this owner`);
+    if(!primaryTag) throw new HTTPError(400, `Primary tag doesn't exist for this owner`);
 
-    const sampleDocs = await Document.find({ ownerId, primaryTagId: primaryTag })
+    const sampleDocs = await Document.find({ ownerId, primaryTagId: primaryTag, deleted: false })
       .limit(5)
       .lean();
 
@@ -63,7 +63,7 @@ export async function processFolderAction(input: ProcessFolderInput) {
     const regex = new RegExp(parsed.regex, "gi");
     const chosenAction = parsed.action;
 
-    const docs = await Document.find({ ownerId, primaryTagId: primaryTag });
+    const docs = await Document.find({ ownerId, primaryTagId: primaryTag, deleted: false });
     const rows: any[] = [];
 
     for (const doc of docs) {
@@ -79,22 +79,31 @@ export async function processFolderAction(input: ProcessFolderInput) {
             ? rows.map((r) => `${r.filename},${r.extracted}`).join("\n")
             : rows.map((r) => `${r.filename}: ${r.extracted}`).join("\n");
 
-    await createDocumentWithTags({
+    const now = new Date();
+
+    const timestamp = now
+        .toISOString()
+        .replace("T", "_")
+        .replace(/[:.]/g, "-")
+        .replace("Z", ""); 
+
+
+    const document = await createDocumentWithTags({
         ownerId,
-        filename: `${scope.name}-result.${chosenAction === "make_csv" ? "csv" : "txt"}`,
+        filename: `action-${ timestamp }-result.${ chosenAction === "make_csv" ? "csv" : "txt" }`,
         mime: chosenAction === "make_csv" ? "text/csv" : "text/plain",
         textContent: output,
         primaryTag: scope.name,
         secondaryTags: ["result", chosenAction],
     });
 
-    return { keywords: parsed.keywords, regex: parsed.regex, action: chosenAction };
+    return document;
 }
 
 export async function processFileAction(input: ProcessFileInput) {
     const { ownerId, scope, messages, actions } = input;
 
-    const doc = await Document.findOne({ ownerId, filename: scope.name }).lean();
+    const doc = await Document.findOne({ ownerId, filename: scope.name, deleted: false }).lean();
     if (!doc) throw new HTTPError(404, "Document not found");
 
     const llmPrompt = `
@@ -120,17 +129,22 @@ export async function processFileAction(input: ProcessFileInput) {
     const chosenAction = parsed.action;
     const outputContent = parsed.output ?? doc.textContent;
 
-    await createDocumentWithTags({
+    const now = new Date();
+
+    const timestamp = now
+        .toISOString()
+        .replace("T", "_")
+        .replace(/[:.]/g, "-")
+        .replace("Z", ""); 
+
+    const document = await createDocumentWithTags({
         ownerId,
-        filename: `${scope.name}-result.${chosenAction === "make_csv" ? "csv" : "txt"}`,
+        filename: `action-${ timestamp }-result.${ chosenAction === "make_csv" ? "csv" : "txt" }`,
         mime: chosenAction === "make_csv" ? "text/csv" : "text/plain",
         textContent: outputContent,
         primaryTag: scope.folder,
         secondaryTags: ["result", chosenAction],
     });
 
-    return {
-        action: chosenAction,
-        output: outputContent,
-    };
+    return document;
 }

@@ -2,6 +2,7 @@ import { Document } from "../../models/Document.js";
 import { DocumentTag } from "../../models/DocumentTag.js";
 import { Tag } from "../../models/Tag.js";
 import { Types } from "mongoose";
+import HTTPError from "../../utils/HTTPError.js";
 
 interface PrimaryTagCount {
     tagId: Types.ObjectId;
@@ -11,9 +12,8 @@ interface PrimaryTagCount {
 
 export async function listPrimaryTagsWithCount(ownerId: string) {
     const results = await DocumentTag.aggregate([
-        { $match: { isPrimary: true } }, // only primary tags
+        { $match: { isPrimary: true, deleted: false } },
 
-        // Join with Document to access ownerId
         {
             $lookup: {
                 from: "documents",
@@ -24,10 +24,12 @@ export async function listPrimaryTagsWithCount(ownerId: string) {
         },
         { $unwind: "$document" },
 
-        // Filter by ownerId
-        { $match: { "document.ownerId": new Types.ObjectId(ownerId) } },
+        { 
+            $match: { 
+                "document.ownerId": new Types.ObjectId(ownerId),
+                "document.deleted": false,
+        }   },
 
-        // Join with Tag collection to get tag name
         {
             $lookup: {
                 from: "tags",
@@ -38,7 +40,6 @@ export async function listPrimaryTagsWithCount(ownerId: string) {
         },
         { $unwind: "$tag" },
 
-        // Group by tag to count documents
         {
             $group: {
                 _id: "$tagId",
@@ -47,7 +48,6 @@ export async function listPrimaryTagsWithCount(ownerId: string) {
             },
         },
 
-        // Shape the output
         {
             $project: {
                 tagId: "$_id",
@@ -67,7 +67,27 @@ export async function listDocumentsWithPrimaryTag(ownerId: string, tag: string) 
     const id = new Types.ObjectId(ownerId);
     const tagId = new Types.ObjectId(tag);
 
-    const documents = Document.find({ ownerId, primaryTagId: tagId }).sort({ createdAt: -1 });
+    const documents = await Document.find({ ownerId: id, primaryTagId: tagId, deleted: false }).sort({ createdAt: -1 });
+
+    if(documents.length === 0) throw new HTTPError(404, "Folder doesn't exist/is empty");
 
     return documents;
+}
+
+export async function createTag(ownerId: string, name: string) {
+    if (!name?.trim()) {
+        throw new HTTPError(400, "Tag name is required");
+    }
+
+    const normalized = name.toLowerCase();
+
+    const existingTag = await Tag.findOne({ name: normalized, ownerId });
+    if (existingTag) {
+        throw new HTTPError(409, "Tag already exists");
+    }
+
+    const tag = new Tag({ name: normalized, ownerId });
+    await tag.save();
+
+    return tag;
 }

@@ -11,7 +11,7 @@ export const assignRole = async (
         const userId: string = req.params.id!;
         const { role } = req.body
 
-        if(req.user!.role !== "admin") throw new HTTPError(403, "Forbidden");
+        if(req.user!.accessLevel !== "any") throw new HTTPError(403, "Forbidden");
 
         if (!["admin", "moderator", "user"].includes(role)) {
             return res.status(400).json({ message: "Invalid role" });

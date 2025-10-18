@@ -5,7 +5,7 @@ import { authorizePermission } from "../middlewares/permissions.middleware.js";
 
 const router = express.Router();
 
-router.post('/run', authorize, runAction);
-router.get('/usage/month', authorize, authorizePermission("actions:usage"), usageController)
+router.post('/run', authorize, authorizePermission("actions:run"), runAction);
+router.get('/usage/month', authorize, authorizePermission("actions:usage"), usageController);
 
 export default router;

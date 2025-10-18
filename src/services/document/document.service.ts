@@ -4,6 +4,7 @@ import { DocumentTag } from "../../models/DocumentTag.js";
 import { runInTransaction } from "../../utils/transaction.js";
 import type { HydratedDocument, Types } from "mongoose";
 import HTTPError from "../../utils/HTTPError.js";
+import mongoose from "mongoose";
 
 interface CreateDocInput {
     ownerId: Types.ObjectId;
@@ -33,7 +34,7 @@ export async function updateDocument(
 
 
 export async function fetchDocument(documentId: Types.ObjectId, userId: Types.ObjectId, accessLevel: AccessLevel) {
-    const doc = await Document.findById(documentId).lean();
+    const doc = await Document.findOne({ _id: documentId, deleted: false }).lean();
     
     if(!doc) throw new HTTPError(404, "Document Not Found");
 
@@ -48,22 +49,22 @@ export async function createDocumentWithTags(input: CreateDocInput) {
     return runInTransaction(async (session) => {
         const { ownerId, filename, mime, textContent, primaryTag, secondaryTags } = input;
 
-            const existingDoc = await Document.findOne({
-            ownerId,
-            filename,
-        // Assuming primaryTagId will be looked up below, convert to lowercase for consistency
-        }).session(session);
-
-        if (existingDoc) {
-            throw new HTTPError(409, "Document with this name and primary tag already exists");
-        }
-
-
         const primaryTagDoc = await Tag.findOneAndUpdate(
             { name: primaryTag.toLowerCase(), ownerId },
             { $setOnInsert: { ownerId } },
             { upsert: true, new: true, session }
         );
+        
+        const existingDoc = await Document.findOne({
+            ownerId,
+            filename,
+            primaryTagId: primaryTagDoc._id,
+            deleted: false,
+        }).session(session);
+
+        if (existingDoc) {
+            throw new HTTPError(409, "Document with this name and primary tag already exists");
+        }
 
         const doc = new Document({
             ownerId,
@@ -99,4 +100,35 @@ export async function createDocumentWithTags(input: CreateDocInput) {
 
         return { document: doc, primaryTag: primaryTagDoc, secondaryTags: allSecondaryTags };
     });
+}
+
+export async function softDeleteDocumentWithTags(documentId: Types.ObjectId, ownerId: Types.ObjectId) {
+    const session = await mongoose.startSession();
+
+    try {
+        await session.withTransaction(async () => {
+
+            const doc = await Document.findOne({ _id: documentId, ownerId, deleted: { $ne: true } }).session(session);
+            if (!doc) {
+                throw new HTTPError(404, "Document not found or already deleted");
+            }
+
+            await Document.updateOne(
+                { _id: documentId },
+                { $set: { deleted: true, deletedAt: new Date() } },
+                { session }
+            );
+
+            await DocumentTag.updateMany(
+                { documentId },
+                { $set: { deleted: true, deletedAt: new Date() } },
+                { session }
+            );
+        });
+
+    } catch (err) {
+        throw err;
+    } finally {
+        await session.endSession();
+    }
 }

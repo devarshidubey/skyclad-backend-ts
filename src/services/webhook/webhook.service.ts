@@ -3,6 +3,7 @@ import { emailClasses, officialKeywords, promotionalKeywords } from "../../utils
 import { askCerebras, askCerebrasWithRetry } from "../action/cerebras.service.js";
 import { Task } from "../../models/Task.js";
 import HTTPError from "../../utils/HTTPError.js";
+import logger from "../../utils/logger.js";
 
 interface UnsubscribeInfo {
     channel: "email" | "link";
@@ -33,6 +34,31 @@ export function classifyOCRInputDeterministic(textContent: string) {
     return unsubscribe ? { type, unsubscribe } : { type };
 }
 
+export const createTask = async (ownerId: Types.ObjectId, target: string, channel: string, sourceId: string) => {
+    const existingTask = await Task.findOne({
+        ownerId,
+        target,
+    });
+
+    if(!existingTask) {
+        const task = await Task.create({
+            ownerId,
+            sourceId,
+            type: "ocr_task",
+            channel,
+            target,
+        });
+        logger.info({
+            at: new Date(),
+            userId: ownerId,
+            action: "TASK_CREATE",
+            entityType: "Task",
+            entityId: task._id,
+            metadata: {}
+        })
+        return task;
+    }
+}
 
 export const classifyOCRInput = async (textContent: string, ownerId: Types.ObjectId, sourceId: string) => {
     const llmPrompt = `
@@ -62,20 +88,12 @@ export const classifyOCRInput = async (textContent: string, ownerId: Types.Objec
     }
     
     if(parsed.type === "ad" && parsed.unsubscribe) {
-        const existingTask = await Task.findOne({
+        await createTask(
             ownerId,
-            target: parsed.unsubscribe.target,
-        });
-
-        if(!existingTask) {
-            const task = await Task.create({
-                ownerId,
-                sourceId,
-                type: "ocr_task",
-                channel: parsed.unsubscribe.channel,
-                target: parsed.unsubscribe.target,
-            });
-        }
+            parsed.unsubscribe.target,
+            parsed.unsubscribe.channel,
+            sourceId  
+        );
     }
 
     return parsed;

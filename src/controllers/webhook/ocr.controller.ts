@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import { ocrSchema } from "../../validators/webhook.validator.js";
 import { classifyOCRInput } from "../../services/webhook/webhook.service.js";
 import { enforceDailyLimit } from "../../utils/rateLimit.js"
+import logger from "../../utils/logger.js";
 
 export const ocrController = async (
     req: Request,
@@ -16,6 +17,19 @@ export const ocrController = async (
         await enforceDailyLimit(ownerId, source, "ocr_task");
 
         const result = await classifyOCRInput( text, ownerId, source );
+
+        logger.info({
+            at: new Date(),
+            userId: ownerId,
+            action: "OCR_INJESTION",
+            entityType: "OCR",
+            entityId: null,
+            metadata: {
+                role: req.user!.role,
+                accessLevel: req.user!.accessLevel,
+                ownerId: ownerId,
+            }
+        });
         
         res.status(200).json({
             success: true,

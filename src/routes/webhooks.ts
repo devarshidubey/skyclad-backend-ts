@@ -4,6 +4,6 @@ import { authorize } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.use('/ocr', authorize, ocrController);
+router.post('/ocr', authorize, ocrController);
 
 export default router;

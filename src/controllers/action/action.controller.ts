@@ -3,6 +3,8 @@ import { processFileAction, processFolderAction } from "../../services/action/ac
 import { Types } from "mongoose";
 import { fetchActionUsage, recordUsage } from "../../services/action/usage.service.js";
 import HTTPError from "../../utils/HTTPError.js";
+import { actionSchema } from "../../validators/action.validator.js";
+import logger from "../../utils/logger.js";
 
 
 export const runAction = async (
@@ -11,7 +13,7 @@ export const runAction = async (
     next: NextFunction
 ) => {
     try {
-        const { scope, messages, actions } = req.body;
+        const { scope, messages, actions } = actionSchema.parse(req.body);
         const ownerId = new Types.ObjectId(req.user!.id);
 
         if (!scope || !messages || !actions)
@@ -19,12 +21,35 @@ export const runAction = async (
 
         let result;
 
-        if (scope.type === "folder") result = await processFolderAction({ ownerId, scope, messages, actions }); 
-        else if (scope.type === "file") result = await processFileAction({ ownerId, scope, messages, actions });
+        if (scope.type === "folder") result = await processFolderAction({ 
+            ownerId,
+            scope: scope as { type: "folder"; name: string }, 
+            messages,
+            actions 
+        }); 
+        else if (scope.type === "file") result = await processFileAction({
+            ownerId,
+            scope: scope as { type: "file", folder: string, name: string },
+            messages,
+            actions 
+        });
         else return res.status(400).json({ error: "Unsupported scope type" });
         
 
         await recordUsage(ownerId, "agent_run", 5);
+
+        logger.info({
+            at: new Date(),
+            userId: ownerId,
+            action: "SCOPED_ACTION",
+            entityType: "Document",
+            entityId: result.document._id,
+            metadata: {
+                role: req.user!.role,
+                accessLevel: req.user!.accessLevel,
+                ownerId: ownerId,
+            }
+        });
 
         res.status(200).json({
             success: true,

@@ -14,13 +14,6 @@ const errorHandler = (
 )=> {
     const statusCode = err.statusCode || 500;
     const message = statusCode === 500? "Internal Server Error": err.message;
-    
-    if(statusCode >= 500) {
-        logger.error({
-            message: err.message,
-            stack: err.stack,
-        });
-    }
 
     if(res.headersSent) return;
 
@@ -32,6 +25,13 @@ const errorHandler = (
                 field: issue.path.join("."),
                 message: issue.message,
             }))
+        });
+    }
+
+    if(statusCode >= 500) {
+        logger.error({
+            message: err.message,
+            stack: err.stack,
         });
     }
 

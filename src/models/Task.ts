@@ -48,4 +48,6 @@ const taskSchema = new Schema({
     }
 }, { timestamps: true });
 
+taskSchema.index({ ownerId: 1, target: 1 }, { unique: true });
+
 export const Task = mongoose.model('Task', taskSchema);

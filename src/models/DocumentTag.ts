@@ -6,6 +6,8 @@ export interface IDocumentTag extends Document {
     documentId: Schema.Types.ObjectId;
     tagId: Schema.Types.ObjectId;
     isPrimary: boolean;
+    deleted: boolean;
+    deletedAt: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -24,7 +26,15 @@ const documentTagSchema = new Schema<IDocumentTag>({
     },
     isPrimary: {
         type: Boolean,
-        required: true
+        required: true,
+    },
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
+    deletedAt: {
+        type: Date,
+        default: null,
     }
 }, { timestamps: true });
 
@@ -32,14 +42,18 @@ documentTagSchema.index(
     { documentId: 1, isPrimary: 1 },
     {
         unique: true,
-        partialFilterExpression: { isPrimary: true },
+        partialFilterExpression: { isPrimary: true, deleted: false }, //only non dleted Pr. tags must be unique
         name: "unique_primary_tag_per_document"
     }
 );
 
 documentTagSchema.index(
     { documentId: 1, tagId: 1 },
-    { unique: true, name: "unique_tag_per_document" }
+    { 
+        unique: true,
+        partialFilterExpression: { deleted: false },
+        name: "unique_tag_per_document"
+    }
 );
 
 export const DocumentTag = model<IDocumentTag>("DocumentTag", documentTagSchema);
