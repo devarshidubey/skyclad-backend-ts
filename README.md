@@ -188,6 +188,16 @@ Registers a new user.
   "password": "string"
 }
 ```
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/auth/signup' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZWY1MGRjYWY3YTIwNThmYjE2OTBjYyIsImVtYWlsIjoiaG9tZWJld3dAYXBwbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NjA3MjMzMDcsImV4cCI6MTc2MTMyODEwN30.YhJfuNog3wyQerNE8Htca5mLNUOlkCh0BBVI7lmKpGs' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "email": "malicious@mail.com",
+  "password": "Pass@123"
+}'
+```
 ---
 
 #### POST /v1/auth/login
@@ -200,16 +210,20 @@ Logs in a user and returns JWT tokens.
   "password": "string"
 }
 ```
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "youremail@mail.com",
+    "password": "yourpassword"
+}'
+```
 ---
 ### Document Routes
 
 #### POST /v1/docs/
 Creates a new document.
-
-**Headers:**
-```
-authorization: Bearer <access_token>
-```
 
 **Request Body:**
 ```json
@@ -221,14 +235,33 @@ authorization: Bearer <access_token>
   "secondaryTags": ["string"]
 }
 ```
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/docs/' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjRlMmMxMjM2ZWQ4ZGRjZjUxNGUyZCIsImVtYWlsIjoiZGV2ZHViZXlAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDg3OTMxMSwiZXhwIjoxNzYxNDg0MTExfQ.6EO5JQ41Bo8i2hNnjJAFjB-e4AkHHITbTvjlrzHvTqw' \
+--header 'Content-Type: application/json' \
+--data '{
+  "filename": "04",
+  "mime": "text/plain",
+  "textContent": "cost: Rs 1000",
+  "primaryTag": "invoices_nov",
+  "secondaryTags": ["invoices", "bills"]
+}
+'
+```
 ---
 
 #### GET /v1/docs/:id
 Fetch a single document by ID.
 
-**Headers:**
+**cURL example:**
 ```
-authorization: Bearer <access_token>
+curl --location --request GET 'https://skyclad-backend-ts-production.up.railway.app/v1/docs/68f4e506236ed8ddcf514e32' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjNjMmQ2MjY5ZjkwMTFmNjA2NWYyYSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjA4ODA1NzEsImV4cCI6MTc2MTQ4NTM3MX0.SleVIJaiMPdQ0bYr57Vq8Nk_NFrWNz_R9Vh1AJmXfKU' \
+--header 'Content-Type: application/json' \
+--data '{
+	"name": "Add your name in the body"
+}'
 ```
 
 ---
@@ -236,9 +269,11 @@ authorization: Bearer <access_token>
 #### DELETE /v1/docs/:id
 Deletes a document by ID.
 
-**Headers:**
+**cURL example:**
 ```
-authorization: Bearer <access_token>
+curl --location --request DELETE 'https://skyclad-backend-ts-production.up.railway.app/v1/docs/68f4e637236ed8ddcf514e43' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjNjMmQ2MjY5ZjkwMTFmNjA2NWYyYSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjA4ODA1NzEsImV4cCI6MTc2MTQ4NTM3MX0.SleVIJaiMPdQ0bYr57Vq8Nk_NFrWNz_R9Vh1AJmXfKU' \
+--data ''
 ```
 ---
 
@@ -246,11 +281,6 @@ authorization: Bearer <access_token>
 
 #### POST /v1/folders
 Creates a new folder.
-
-**Headers:**
-```
-authorization: Bearer <access_token>
-```
 
 **Request Body:**
 ```json
@@ -262,20 +292,23 @@ authorization: Bearer <access_token>
 ---
 
 #### GET /v1/folders?ownerId=
-Fetch all folders owned by the authenticated user or owned by ownerId query parameter (if necessary permission)
+Fetch all folders owned by the authenticated user or owned by ownerId query parameter (if necessary permission). Sending owenrId as query is optional.
 
-**Headers:**
+**cURL example:**
 ```
-authorization: Bearer <access_token>
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/folders?ownerId=68f4e50677944434f73278a8' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjRlMmMxMjM2ZWQ4ZGRjZjUxNGUyZCIsImVtYWlsIjoiZGV2ZHViZXlAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDg3OTMxMSwiZXhwIjoxNzYxNDg0MTExfQ.6EO5JQ41Bo8i2hNnjJAFjB-e4AkHHITbTvjlrzHvTqw' \
+--data ''
 ```
 ---
 
 #### GET /v1/folders/:id/docs?ownerId=
-Fetch all documents within a specific folder owner by the authenticated user or owned by ownerId
+Fetch all documents within a specific folder owner by the authenticated user or owned by ownerId. Sending ownerId as query is optional.
 
-**Headers:**
+**cURL example:**
 ```
-authorization: Bearer <access_token>
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/folders/68f4e50677944434f73278a8/docs?ownerId=68f4e50677944434f73278a8' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjRlMmMxMjM2ZWQ4ZGRjZjUxNGUyZCIsImVtYWlsIjoiZGV2ZHViZXlAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDg3OTMxMSwiZXhwIjoxNzYxNDg0MTExfQ.6EO5JQ41Bo8i2hNnjJAFjB-e4AkHHITbTvjlrzHvTqw'
 ```
 ---
 
@@ -284,28 +317,37 @@ authorization: Bearer <access_token>
 #### POST /v1/actions/run
 Perform an action based on user prompts. Cerebras API integrated.
 
-**Headers:**
-```
-authorization: Bearer <access_token>
-```
-
 **Request Body:**
 ```json
 {
-    "scope": { "type": "enum[folder,file]", "folder"?: "stirng", "name": "string" },
+    "scope": { "type": "enum[folder,file]", "folder?": "stirng", "name": "string" },
     "messages": [{ "role": "string", "content": "string" }],
     "actions": ["make_document", "make_csv"]
 }
+```
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/actions/run' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjRlMmMxMjM2ZWQ4ZGRjZjUxNGUyZCIsImVtYWlsIjoiZGV2ZHViZXlAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDg3OTMxMSwiZXhwIjoxNzYxNDg0MTExfQ.6EO5JQ41Bo8i2hNnjJAFjB-e4AkHHITbTvjlrzHvTqw' \
+--header 'Content-Type: application/json' \
+--data '{
+    "scope": { "type": "folder", "name": "invoices_nov" },
+    "messages": [{ "role": "user", "content": "make csv of vendor totals" }],
+    "actions": ["make_document", "make_csv"]
+}
+'
 ```
 ---
 
 #### GET /v1/actions/usage/month
 Get the credits used in a month for running actions. (5 credits/action)\
-**Headers:**
-```
-authorization: Bearer <access_token>
-```
 
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/actions/usage/month' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjRlMmMxMjM2ZWQ4ZGRjZjUxNGUyZCIsImVtYWlsIjoiZGV2ZHViZXlAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDg3OTMxMSwiZXhwIjoxNzYxNDg0MTExfQ.6EO5JQ41Bo8i2hNnjJAFjB-e4AkHHITbTvjlrzHvTqw' \
+--data ''
+```
 ---
 
 ### Webhook Ingestion
@@ -323,9 +365,27 @@ Ingests external webhook payloads from third-party OCR worker with a user's cred
 
 }
 ```
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/webhooks/ocr' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjRlMmMxMjM2ZWQ4ZGRjZjUxNGUyZCIsImVtYWlsIjoiZGV2ZHViZXlAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc2MDg3OTMxMSwiZXhwIjoxNzYxNDg0MTExfQ.6EO5JQ41Bo8i2hNnjJAFjB-e4AkHHITbTvjlrzHvTqw' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "source":"scanner-02",
+  "imageId":"img_124",
+  "text":"LIMITED TIME SALE… unsubscribe: mailto:stop1@geez.com",
+  "meta":{"address":"123 Main St"}
+
+}'
+```
 ---
 
 ### Metrics Endpoint
 
 #### GET /api/metrics
 Exports Prometheus-compatible metrics for monitoring.
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/metrics/' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjNjMmQ2MjY5ZjkwMTFmNjA2NWYyYSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjA4MDY0ODEsImV4cCI6MTc2MTQxMTI4MX0.7YAEDUB_VW-rjfj1SUUkoZrYw2YpmRn5ZJ9FDVnp0SA'
+```
