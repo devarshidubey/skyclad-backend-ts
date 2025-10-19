@@ -3,8 +3,8 @@ import logger from "../utils/logger.js";
 
 export const connectDb = async function() {
     try{
-        mongoose.connect(process.env.MONGO_URI!, {
-        })
+        console.log("🔍 MONGO_URI prefix:", process.env.MONGO_URI?.slice(0, 25));
+        mongoose.connect(process.env.MONGO_URI!, {})
         //logger.info("DB connected");
     } catch(error) {
         if(error instanceof Error) {
