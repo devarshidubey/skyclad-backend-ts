@@ -41,12 +41,12 @@ Project start date: **14th Oct 2025**, finish date: **19th Oct 2025**
 
 ## Setup & Installation
 
-1. Clone the repo
+1. **Clone the repo**
 ```
 git clone <repo_url>
 cd skyclad-backend-ts
 ```
-2. Create a .env file like this
+2. **Create a .env file like this**
 ```
 PORT=3000
 ALLOWED_HEADERS=Authorization,Cookie,Content-Type,Accept,Origin,X-Requested-With,Range,If-Range,If-Modified-Since,If-None-Match,Content-Length,Content-Range
@@ -62,17 +62,18 @@ MONGO_AUDIT_DB=audit_logs
 CEREBRAS_API_KEY=your_api_key
 TASKS_DAILY_LIMIT=3
 ```
-3. Install dependencies
+3. **Install dependencies**
 ```
 npm install
 ```
-4. Populate Database
+4. **Populate Database**
 Run the seed script, that will create an admin and populate the database with documents
 ```
 npm run seed
 ```
-Admin default credentails: `{"Admin@example.com", "Admin@123"}`
-4. Build and run the server
+  Admin default credentails: `{"Admin@example.com", "Admin@123"}`
+
+4. **Build and run the server**
 ```
 npm run build
 npm run start
