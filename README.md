@@ -66,6 +66,12 @@ TASKS_DAILY_LIMIT=3
 ```
 npm install
 ```
+4. Populate Database
+Run the seed script, that will create an admin and populate the database with documents
+```
+npm run seed
+```
+Admin default credentails: `{"Admin@example.com", "Admin@123"}`
 4. Build and run the server
 ```
 npm run build
