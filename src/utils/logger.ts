@@ -4,6 +4,9 @@ import type { TransformableInfo } from "logform";
 
 function getMongoTransport() {
   if(process.env.NODE_ENV === "test") return null;
+  
+  if(!process.env.MONGO_AUDIT_URI) return null; 
+
   return new MongoTransport({
     connectionString: process.env.MONGO_AUDIT_URI!,
     dbName: process.env.MONGO_AUDIT_DB!,
