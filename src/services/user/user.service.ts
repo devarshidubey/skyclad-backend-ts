@@ -11,6 +11,6 @@ export const updateUserRole = async (userId: string, role: string)=> {
 }
 
 export const fetchUsers = async()=> {
-    const users = await User.find({}).lean();
+    const users = await User.find({}).select("-password").lean();
     return users;
 }
