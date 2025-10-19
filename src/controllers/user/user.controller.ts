@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import HTTPError from "../../utils/HTTPError.js";
-import { updateUserRole } from "../../services/user/user.service.js";
+import { fetchUsers, updateUserRole } from "../../services/user/user.service.js";
 
 export const assignRole = async (
     req: Request,
@@ -25,6 +25,25 @@ export const assignRole = async (
             success: true,
             message: "Users role updated successfully",
             data: user,
+        });
+    } catch(err) {
+        next(err);
+    }
+}
+
+export const getUsersController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        if(req.user!.accessLevel !== "any") throw new HTTPError(403, "Forbidden");
+
+        const users = await fetchUsers();
+
+        res.status(200).json({
+            success: true,
+            data: users
         });
     } catch(err) {
         next(err);

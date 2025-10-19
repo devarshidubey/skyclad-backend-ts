@@ -9,6 +9,7 @@ export const ROLES = {
         "actions:run:own",
         "actions:usage:any",
         "audit:read:any",
+        "users:read:any",
         "access:update:any",
     ],
     moderator: [

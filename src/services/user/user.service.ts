@@ -9,3 +9,8 @@ export const updateUserRole = async (userId: string, role: string)=> {
 
     return updatedUser;
 }
+
+export const fetchUsers = async()=> {
+    const users = await User.find({}).lean();
+    return users;
+}
