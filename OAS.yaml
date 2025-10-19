@@ -1,0 +1,649 @@
+openapi: 3.0.0
+info:
+  title: Skyclad Assignment
+  version: 1.0.0
+  description: ''
+servers:
+  - url: '{{base_url}}'
+paths:
+  /v1/webhooks/ocr:
+    post:
+      summary: POST ocr
+      tags:
+        - OCR Webhook
+      responses:
+        '200':
+          description: POST ocr
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  type: string
+                imageId:
+                  type: string
+                text:
+                  type: string
+                  format: style
+                meta:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+  /v1/docs/:
+    post:
+      summary: Post document
+      tags:
+        - Document CRUD
+      responses:
+        '201':
+          description: Post document
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: integer
+      description: >-
+        This is a POST request, submitting data to an API via the request body.
+        This request submits JSON data, and the data is reflected in the
+        response.
+
+
+        A successful POST request typically returns a `200 OK` or `201 Created`
+        response code.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  format: utc-millisec
+                mime:
+                  type: string
+                textContent:
+                  type: string
+                  format: style
+                primaryTag:
+                  type: string
+                secondaryTags:
+                  type: array
+                  items:
+                    type: string
+  /v1/docs/68f4e506236ed8ddcf514e32:
+    get:
+      summary: Get document
+      tags:
+        - Document CRUD
+      responses:
+        '200':
+          description: Get document
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      description: >-
+        This is a POST request, submitting data to an API via the request body.
+        This request submits JSON data, and the data is reflected in the
+        response.
+
+
+        A successful POST request typically returns a `200 OK` or `201 Created`
+        response code.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+    put:
+      summary: Update document
+      tags:
+        - Document CRUD
+      responses:
+        '200':
+          description: Update document
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      description: >-
+        This is a PUT request and it is used to overwrite an existing piece of
+        data. For instance, after you create an entity with a POST request, you
+        may want to modify that later. You can do that using a PUT request. You
+        typically identify the entity being updated by including an identifier
+        in the URL (eg. `id=1`).
+
+
+        A successful PUT request typically returns a `200 OK`, `201 Created`, or
+        `204 No Content` response code.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                textContent:
+                  type: string
+  /v1/docs/68f4e637236ed8ddcf514e43:
+    delete:
+      summary: Delete document
+      tags:
+        - Document CRUD
+      responses:
+        '200':
+          description: Delete document
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      description: >-
+        This is a DELETE request, and it is used to delete data that was
+        previously created via a POST request. You typically identify the entity
+        being updated by including an identifier in the URL (eg. `id=1`).
+
+
+        A successful DELETE request typically returns a `200 OK`, `202
+        Accepted`, or `204 No Content` response code.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /v1/folders:
+    get:
+      summary: Get folders
+      tags:
+        - Folder
+      parameters:
+        - name: ownerId
+          in: query
+          required: false
+          schema:
+            deprecated: false
+      responses:
+        '200':
+          description: Get folders
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      description: >-
+        This is a GET request and it is used to "get" data from an endpoint.
+        There is no request body for a GET request, but you can use query
+        parameters to help specify the resource you want data on (e.g., in this
+        request, we have `id=1`).
+
+
+        A successful GET response will have a `200 OK` status, and should
+        include some kind of response body - for example, HTML web content or
+        JSON data.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /v1/folders/68f4e50677944434f73278a8/docs:
+    get:
+      summary: Get docs from tag
+      tags:
+        - Folder
+      parameters:
+        - name: ownerId
+          in: query
+          required: false
+          schema:
+            deprecated: false
+      responses:
+        '200':
+          description: Get docs from tag
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: integer
+  /v1/folders/:
+    post:
+      summary: Create folder
+      tags:
+        - Folder
+      responses:
+        '201':
+          description: Create folder
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                primaryTag:
+                  type: string
+  /v1/actions/usage/month:
+    get:
+      summary: Action usage
+      tags:
+        - Scoped Actions
+      responses:
+        '200':
+          description: Action usage
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: integer
+  /v1/actions/run:
+    post:
+      summary: Run Action
+      tags:
+        - Scoped Actions
+      responses:
+        '200':
+          description: Run Action
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scope:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    name:
+                      type: string
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                      content:
+                        type: string
+                actions:
+                  type: array
+                  items:
+                    type: string
+  /v1/metrics/:
+    get:
+      summary: Get metrics
+      tags:
+        - Auditing
+      responses:
+        '200':
+          description: Get metrics
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+  /v1/auth/login:
+    post:
+      summary: Login
+      tags: []
+      responses:
+        '200':
+          description: Login
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+  /v1/auth/signup:
+    post:
+      summary: Signup
+      tags: []
+      responses:
+        '201':
+          description: Signup
+          headers:
+            Access-Control-Allow-Credentials:
+              schema:
+                type: boolean
+            Content-Length:
+              schema:
+                type: integer
+            Date:
+              schema:
+                type: string
+            Etag:
+              schema:
+                type: string
+            Server:
+              schema:
+                type: string
+            Vary:
+              schema:
+                type: string
+            X-Powered-By:
+              schema:
+                type: string
+            X-Railway-Edge:
+              schema:
+                type: string
+            X-Railway-Request-Id:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
