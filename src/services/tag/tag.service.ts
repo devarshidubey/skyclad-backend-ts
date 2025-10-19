@@ -11,50 +11,70 @@ interface PrimaryTagCount {
 }
 
 export async function listPrimaryTagsWithCount(ownerId: string) {
-    const results = await DocumentTag.aggregate([
-        { $match: { isPrimary: true, deleted: false } },
+    const results = await Tag.aggregate([
+        { $match: { ownerId: new Types.ObjectId(ownerId) } },
+
+        {$lookup: {
+                from: "documenttags",
+                localField: "_id",
+                foreignField: "tagId",
+                as: "documentTags",
+        },},
+
+        { $unwind: { path: "$documentTags", preserveNullAndEmptyArrays: true } },
 
         {
-            $lookup: {
-                from: "documents",
-                localField: "documentId",
-                foreignField: "_id",
-                as: "document",
-            },
+        $lookup: {
+            from: "documents",
+            localField: "documentTags.documentId",
+            foreignField: "_id",
+            as: "document",
         },
-        { $unwind: "$document" },
+        },
+        { $unwind: { path: "$document", preserveNullAndEmptyArrays: true } },
 
-        { 
-            $match: { 
+        {
+        $match: {
+            $or: [
+            { document: { $exists: false } }, // no documents
+            {
                 "document.ownerId": new Types.ObjectId(ownerId),
                 "document.deleted": false,
-        }   },
-
-        {
-            $lookup: {
-                from: "tags",
-                localField: "tagId",
-                foreignField: "_id",
-                as: "tag",
+                "documentTags.isPrimary": true,
+                "documentTags.deleted": false,
             },
+            ],
         },
-        { $unwind: "$tag" },
-
-        {
-            $group: {
-                _id: "$tagId",
-                name: { $first: "$tag.name" },
-                documentCount: { $sum: 1 },
-            },
         },
 
         {
-            $project: {
-                tagId: "$_id",
-                name: 1,
-                documentCount: 1,
-                _id: 0,
+        $group: {
+            _id: "$_id",
+            name: { $first: "$name" },
+            documentCount: {
+            $sum: {
+                $cond: [
+                {
+                    $and: [
+                    { $ifNull: ["$document._id", false] },
+                    { $eq: ["$documentTags.isPrimary", true] },
+                    ],
+                },
+                1,
+                0,
+                ],
             },
+            },
+        },
+        },
+
+        {
+        $project: {
+            tagId: "$_id",
+            name: 1,
+            documentCount: 1,
+            _id: 0,
+        },
         },
 
         { $sort: { documentCount: -1 } },
