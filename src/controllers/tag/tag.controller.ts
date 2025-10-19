@@ -46,7 +46,6 @@ export const findDocuments = async (
 
         let ownerId = currentUserId;
         if(requestedUserId) {
-            console.log(requestedUserId, )
             if(requestedUserId !== currentUserId && req.user!.accessLevel !== "any") throw new HTTPError(403, "Forbidden");
             ownerId = requestedUserId;
         }

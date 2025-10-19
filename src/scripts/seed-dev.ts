@@ -6,7 +6,6 @@ import { createDocumentWithTags } from "../services/document/document.service.js
 import { Types } from "mongoose";
 import logger from "../utils/logger.js";
 
-// MongoDB connection
 const MONGO_URI = process.env.MONGO_URI!;
 
 async function seed() {

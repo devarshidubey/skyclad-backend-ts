@@ -11,7 +11,6 @@ export function authorizePermission(action: string) {
     if (accessLevel === "none") {
       throw new HTTPError(403, "Forbidden: insufficient permissions");
     }
-    // Attach accessLevel to request so service can enforce object-level checks
     req.user!.accessLevel = accessLevel; 
     next();
   };

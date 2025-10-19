@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 import { User } from "../models/User.js";
 import logger from "../utils/logger.js";
 
-// MongoDB connection
 const MONGO_URI = process.env.MONGO_URI!;
 
 async function seed() {

@@ -14,13 +14,11 @@ describe("Primary Tag Uniqueness", () => {
   });
 
   it("should NOT allow creating a duplicate primary tag for the same user", async () => {
-    // first create the tag
     await request
       .post("/v1/folders/")
       .set("authorization", `Bearer ${user1Token}`)
       .send({ primaryTag: "invoices_2025" });
 
-    // try creating it again
     const res = await request
       .post("/v1/folders/")
       .set("authorization", `Bearer ${user1Token}`)
@@ -37,7 +35,6 @@ describe("Primary Tag Uniqueness", () => {
       .set("authorization", `Bearer ${user2Token}`)
       .send({ primaryTag: "invoices_2025" });
     
-    console.log(res.body)
 
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);

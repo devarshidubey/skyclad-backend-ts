@@ -28,7 +28,6 @@ describe("Webhook Classification & Rate-Limiting", () => {
   });
 
   it("should enforce rate-limiting", async () => {
-    // assuming limit is 3 requests per minute per source
     for (let i = 0; i < 3; i++) {
       const res = await request
         .post("/v1/webhooks/ocr")
@@ -43,7 +42,6 @@ describe("Webhook Classification & Rate-Limiting", () => {
       expect(res.status).toBe(200);
     }
 
-    // 4th request should hit limit
     const res = await request
       .post("/v1/webhooks/ocr")
       .set("authorization", `Bearer ${user1Token}`)

@@ -26,7 +26,6 @@ describe("Folder vs File Scope Rules", () => {
   }, 30000);
 
   it("should succeed if scoped action uses valid folder", async () => {
-    // first create folder
     const tag = await request
       .post("/v1/docs/")
       .set("authorization", `Bearer ${user1Token}`)
@@ -46,7 +45,7 @@ describe("Folder vs File Scope Rules", () => {
         messages: [{ role: "user", content: "make CSV" }],
         actions: ["make_document", "make_csv"],
       }).timeout({
-            response: 30000, // time to wait for the server to start sending a response
+            response: 30000,
             deadline: 60000
       });
 

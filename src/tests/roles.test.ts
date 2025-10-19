@@ -19,7 +19,6 @@ describe("JWT Isolation & Role Enforcement", () => {
     
     expect(res.status).toBe(201);
     user1DocId = res.body.data.document._id;
-    console.log(user1DocId)
   });
 
   it("user2 creates a document", async () => {
@@ -76,7 +75,6 @@ describe("JWT Isolation & Role Enforcement", () => {
       .put(`/v1/docs/${user1DocId}`)
       .set("authorization", `Bearer ${adminToken}`)
       .send({ filename: "redacted", textContent: "admin removed"});
-    console.log(res1.body)
     expect(res1.status).toBe(200);
   });
 
