@@ -1,4 +1,4 @@
-import "dotenv/config";
+//import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.js";
@@ -13,8 +13,8 @@ import type { CorsOptions } from "cors";
 
 const app = express();
 
-const allowedHeaders = process.env.ALLOWED_HEADERS!.split(",");
-const allowedOrigins = process.env.ALLOWED_ORIGINS!.split(",");
+const allowedHeaders = (process.env.ALLOWED_HEADERS || "Content-Type,Authorization").split(",");
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "*").split(",");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
