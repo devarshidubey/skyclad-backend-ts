@@ -382,10 +382,19 @@ curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/webhook
 
 ### Metrics Endpoint
 
-#### GET /api/metrics
+#### GET /api/metrics/prometheus
 Exports Prometheus-compatible metrics for monitoring.
 **cURL example:**
 ```
-curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/metrics/' \
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/metrics/prometheus' \
 --header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjNjMmQ2MjY5ZjkwMTFmNjA2NWYyYSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjA4MDY0ODEsImV4cCI6MTc2MTQxMTI4MX0.7YAEDUB_VW-rjfj1SUUkoZrYw2YpmRn5ZJ9FDVnp0SA'
 ```
+
+#### GET /api/metrics
+Exports JSON metrics for monitoring.
+**cURL example:**
+```
+curl --location 'https://skyclad-backend-ts-production.up.railway.app/v1/metrics/prometheus' \
+--header 'authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjNjMmQ2MjY5ZjkwMTFmNjA2NWYyYSIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjA4MDY0ODEsImV4cCI6MTc2MTQxMTI4MX0.7YAEDUB_VW-rjfj1SUUkoZrYw2YpmRn5ZJ9FDVnp0SA'
+```
+
