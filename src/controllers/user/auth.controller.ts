@@ -46,7 +46,7 @@ export const login = async (
             message: "Logged in",
             data: {
                 accessToken,
-                user: { id: user._id, email: user.email },
+                user: { id: user._id, email: user.email, role: user.role },
             }
         })
     } catch(err) {
