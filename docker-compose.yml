@@ -8,3 +8,16 @@ services:
     env_file:
       - .env   # loads all variables from .env automatically
     restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      ALLOWED_HEADERS: ${ALLOWED_HEADERS}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      BCRYPT_SALT_ROUNDS: ${BCRYPT_SALT_ROUNDS}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      LOG_LEVEL: ${LOG_LEVEL}
+      MONGO_URI: ${MONGO_URI}
+      MONGO_AUDIT_URI: ${MONGO_AUDIT_URI}
+      MONGO_AUDIT_DB: ${MONGO_AUDIT_DB}
+      CEREBRAS_API_KEY: ${CEREBRAS_API_KEY}
+      TASKS_DAILY_LIMIT: ${TASKS_DAILY_LIMIT}
