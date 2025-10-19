@@ -6,7 +6,10 @@ import { getLatestMetricsJSON, getPrometheusMetrics } from '../../services/audit
 
 export const auditController = (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.json(getLatestMetricsJSON());
+        res.status(200).json({
+            success: true,
+            data: getLatestMetricsJSON()
+        });
     } catch (err) {
         next(err);
     }
