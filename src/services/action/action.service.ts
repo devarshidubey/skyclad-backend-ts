@@ -1,5 +1,5 @@
 import { createDocumentWithTags } from "../document/document.service.js";
-import { Document } from "../../models/Document.js"; // adjust import path
+import { Document } from "../../models/Document.js";
 import { Tag } from "../../models/Tag.js";
 import { Types } from "mongoose";
 import { askCerebras, askCerebrasWithRetry } from "./cerebras.service.js";

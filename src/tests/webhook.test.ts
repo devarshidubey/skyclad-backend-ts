@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { request } from "./setup.js"; // supertest + app
+import { request } from "./setup.js";
 import { user1Token } from "./setup.js";
 
 describe("Webhook Classification & Rate-Limiting", () => {

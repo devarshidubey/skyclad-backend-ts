@@ -17,7 +17,7 @@ export let user2Token: string;
 
 beforeAll(async () => {
     mongoServer = await MongoMemoryReplSet.create({ replSet: { count: 4 } });
-    await mongoServer.waitUntilRunning();  // ✅ ensures primary elected
+    await mongoServer.waitUntilRunning();
 
     const uri = mongoServer.getUri();
     await mongoose.connect(uri);
