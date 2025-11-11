@@ -1,4 +1,4 @@
-# Backend Engineer Assignment – Document & Tagging System
+# Document & Tagging System
 
   - [Overview](#overview)
   - [Setup & Installation](#setup--installation)
